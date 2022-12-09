@@ -1,5 +1,9 @@
 # align-address
 
+[![Crates.io](https://img.shields.io/crates/v/align-address)](https://crates.io/crates/align-address)
+[![docs.rs](https://img.shields.io/docsrs/align-address)](https://docs.rs/align-address)
+[![CI](https://github.com/mkroening/align-address/actions/workflows/ci.yml/badge.svg)](https://github.com/mkroening/align-address/actions/workflows/ci.yml)
+
 align-address provides functions for aligning addresses.
 
 ## License
