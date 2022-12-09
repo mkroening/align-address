@@ -6,6 +6,10 @@
 
 align-address provides functions for aligning addresses.
 
+For API documentation see the [docs].
+
+[docs]: https://docs.rs/align-address
+
 ## License
 
 Licensed under either of
