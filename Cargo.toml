@@ -1,0 +1,10 @@
+[package]
+name = "align-address"
+version = "0.0.0"
+authors = ["Martin Kröning <mkroening@posteo.net>"]
+edition = "2021"
+description = "Functions for aligning addresses."
+repository = "https://github.com/mkroening/align-address"
+license = "MIT OR Apache-2.0"
+keywords = ["align", "address"]
+categories = ["no-std"]
