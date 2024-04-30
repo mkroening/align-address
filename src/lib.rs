@@ -41,6 +41,7 @@ pub trait Align<A>: Copy {
     fn align_up(self, align: A) -> Self;
 
     /// Checks whether the address has the demanded alignment.
+    #[allow(clippy::wrong_self_convention)]
     fn is_aligned(self, align: A) -> bool;
 }
 
