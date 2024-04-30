@@ -18,7 +18,7 @@
 //! ```
 //! use align_address::Align;
 //!
-//! assert_eq!(123_u64.align_up(2_u64), 124);
+//! assert_eq!(123_u64.align_up(2), 124);
 //! ```
 
 #![no_std]
@@ -81,19 +81,19 @@ macro_rules! align_impl {
             }
         }
 
-        impl<A: Into<Self>> Align<A> for $u {
+        impl Align for $u {
             #[inline]
-            fn align_down(self, align: A) -> Self {
+            fn align_down(self, align: Self) -> Self {
                 $align_down(self, align.into())
             }
 
             #[inline]
-            fn align_up(self, align: A) -> Self {
+            fn align_up(self, align: Self) -> Self {
                 $align_up(self, align.into())
             }
 
             #[inline]
-            fn is_aligned(self, align: A) -> bool {
+            fn is_aligned(self, align: Self) -> bool {
                 self.align_down(align) == self
             }
         }
@@ -150,10 +150,10 @@ mod tests {
         };
     }
 
-    test_align_up_overflow_impl!(u8, test_align_up_overflow_u8, 2_u8);
-    test_align_up_overflow_impl!(u16, test_align_up_overflow_u16, 2_u16);
-    test_align_up_overflow_impl!(u32, test_align_up_overflow_u32, 2_u32);
-    test_align_up_overflow_impl!(u64, test_align_up_overflow_u64, 2_u64);
-    test_align_up_overflow_impl!(u128, test_align_up_overflow_u128, 2_u128);
-    test_align_up_overflow_impl!(usize, test_align_up_overflow_usize, 2_usize);
+    test_align_up_overflow_impl!(u8, test_align_up_overflow_u8, 2);
+    test_align_up_overflow_impl!(u16, test_align_up_overflow_u16, 2);
+    test_align_up_overflow_impl!(u32, test_align_up_overflow_u32, 2);
+    test_align_up_overflow_impl!(u64, test_align_up_overflow_u64, 2);
+    test_align_up_overflow_impl!(u128, test_align_up_overflow_u128, 2);
+    test_align_up_overflow_impl!(usize, test_align_up_overflow_usize, 2);
 }
