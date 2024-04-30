@@ -25,7 +25,7 @@
 #![forbid(unsafe_code)]
 
 /// An adress that can be aligned.
-pub trait Align<A = Self>: Copy {
+pub trait Align<A = Self>: Copy + PartialEq {
     /// Align address downwards.
     ///
     /// Returns the greatest `x` with alignment `align` so that `x <= addr`.
@@ -42,7 +42,10 @@ pub trait Align<A = Self>: Copy {
 
     /// Checks whether the address has the demanded alignment.
     #[allow(clippy::wrong_self_convention)]
-    fn is_aligned(self, align: A) -> bool;
+    #[inline]
+    fn is_aligned(self, align: A) -> bool {
+        self.align_down(align) == self
+    }
 }
 
 macro_rules! align_impl {
@@ -90,11 +93,6 @@ macro_rules! align_impl {
             #[inline]
             fn align_up(self, align: Self) -> Self {
                 $align_up(self, align.into())
-            }
-
-            #[inline]
-            fn is_aligned(self, align: Self) -> bool {
-                self.align_down(align) == self
             }
         }
     };
