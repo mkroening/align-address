@@ -25,7 +25,7 @@
 #![forbid(unsafe_code)]
 
 /// An adress that can be aligned.
-pub trait Align<A>: Copy {
+pub trait Align<A = Self>: Copy {
     /// Align address downwards.
     ///
     /// Returns the greatest `x` with alignment `align` so that `x <= addr`.
