@@ -87,12 +87,12 @@ macro_rules! align_impl {
         impl Align for $u {
             #[inline]
             fn align_down(self, align: Self) -> Self {
-                $align_down(self, align.into())
+                $align_down(self, align)
             }
 
             #[inline]
             fn align_up(self, align: Self) -> Self {
-                $align_up(self, align.into())
+                $align_up(self, align)
             }
         }
     };
