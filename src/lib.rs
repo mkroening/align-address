@@ -3,11 +3,11 @@
 //! [`Align`] is implemented for all unsigned integers and provides methods for:
 //! * [`align_down`]
 //! * [`align_up`]
-//! * [`is_aligned`]
+//! * [`is_aligned_to`]
 //!
 //! [`align_down`]: Align::align_down
 //! [`align_up`]: Align::align_up
-//! [`is_aligned`]: Align::is_aligned
+//! [`is_aligned_to`]: Align::is_aligned_to
 //!
 //! This crate is based on work from the [`x86_64`] crate, but is available for all architectures and all unsigned integer types.
 //!
@@ -43,7 +43,7 @@ pub trait Align<A = Self>: Copy + PartialEq {
     /// Checks whether the address has the demanded alignment.
     #[allow(clippy::wrong_self_convention)]
     #[inline]
-    fn is_aligned(self, align: A) -> bool {
+    fn is_aligned_to(self, align: A) -> bool {
         self.align_down(align) == self
     }
 }
