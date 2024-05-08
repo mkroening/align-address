@@ -49,15 +49,17 @@ pub trait Align<A = Self>: Copy + PartialEq {
 }
 
 macro_rules! align_impl {
-    ($u:ty, $align_down:ident, $align_up:ident) => {
+    ($u:ty, $align_down:ident, $align_up:ident, $is_aligned_to:ident) => {
         /// Align address downwards.
         ///
         /// Returns the greatest `x` with alignment `align` so that `x <= addr`.
         ///
         /// Panics if the alignment is not a power of two.
+        ///
+        /// This is a `const` version of [`Align::align_down`].
         // Adapted from `x86_64`
         #[inline]
-        const fn $align_down(addr: $u, align: $u) -> $u {
+        pub const fn $align_down(addr: $u, align: $u) -> $u {
             assert!(align.is_power_of_two(), "`align` must be a power of two");
             addr & !(align - 1)
         }
@@ -67,9 +69,11 @@ macro_rules! align_impl {
         /// Returns the smallest `x` with alignment `align` so that `x >= addr`.
         ///
         /// Panics if the alignment is not a power of two or if an overflow occurs.
+        ///
+        /// This is a `const` version of [`Align::align_up`].
         // Adapted from `x86_64`
         #[inline]
-        const fn $align_up(addr: $u, align: $u) -> $u {
+        pub const fn $align_up(addr: $u, align: $u) -> $u {
             assert!(align.is_power_of_two(), "`align` must be a power of two");
             let align_mask = align - 1;
             if addr & align_mask == 0 {
@@ -82,6 +86,14 @@ macro_rules! align_impl {
                     panic!("attempt to add with overflow")
                 }
             }
+        }
+
+        /// Checks whether the address has the demanded alignment.
+        ///
+        /// This is a `const` version of [`Align::is_aligned_to`].
+        #[inline]
+        pub const fn $is_aligned_to(addr: $u, align: $u) -> bool {
+            $align_down(addr, align) == addr
         }
 
         impl Align for $u {
@@ -98,12 +110,12 @@ macro_rules! align_impl {
     };
 }
 
-align_impl!(u8, align_down_u8, align_up_u8);
-align_impl!(u16, align_down_u16, align_up_u16);
-align_impl!(u32, align_down_u32, align_up_u32);
-align_impl!(u64, align_down_u64, align_up_u64);
-align_impl!(u128, align_down_u128, align_up_u128);
-align_impl!(usize, align_down_usize, align_up_usize);
+align_impl!(u8, u8_align_down, u8_align_up, u8_is_aligned_to);
+align_impl!(u16, u16_align_down, u16_align_up, u16_is_aligned_to);
+align_impl!(u32, u32_align_down, u32_align_up, u32_is_aligned_to);
+align_impl!(u64, u64_align_down, u64_align_up, u64_is_aligned_to);
+align_impl!(u128, u128_align_down, u128_align_up, u128_is_aligned_to);
+align_impl!(usize, usize_align_down, usize_align_up, usize_is_aligned_to);
 
 // Adapted from `x86_64`
 #[cfg(test)]
@@ -131,12 +143,12 @@ mod tests {
         };
     }
 
-    test_align_up_impl!(u8, align_up_u8, test_align_up_u8);
-    test_align_up_impl!(u16, align_up_u16, test_align_up_u16);
-    test_align_up_impl!(u32, align_up_u32, test_align_up_u32);
-    test_align_up_impl!(u64, align_up_u64, test_align_up_u64);
-    test_align_up_impl!(u128, align_up_u128, test_align_up_u128);
-    test_align_up_impl!(usize, align_up_usize, test_align_up_usize);
+    test_align_up_impl!(u8, u8_align_up, test_u8_align_up);
+    test_align_up_impl!(u16, u16_align_up, test_u16_align_up);
+    test_align_up_impl!(u32, u32_align_up, test_u32_align_up);
+    test_align_up_impl!(u64, u64_align_up, test_u64_align_up);
+    test_align_up_impl!(u128, u128_align_up, test_u128_align_up);
+    test_align_up_impl!(usize, usize_align_up, test_usize_align_up);
 
     macro_rules! test_align_up_overflow_impl {
         ($u:ty, $test_align_up_overflow:ident, $two:expr) => {
@@ -148,10 +160,10 @@ mod tests {
         };
     }
 
-    test_align_up_overflow_impl!(u8, test_align_up_overflow_u8, 2);
-    test_align_up_overflow_impl!(u16, test_align_up_overflow_u16, 2);
-    test_align_up_overflow_impl!(u32, test_align_up_overflow_u32, 2);
-    test_align_up_overflow_impl!(u64, test_align_up_overflow_u64, 2);
-    test_align_up_overflow_impl!(u128, test_align_up_overflow_u128, 2);
-    test_align_up_overflow_impl!(usize, test_align_up_overflow_usize, 2);
+    test_align_up_overflow_impl!(u8, test_u8_align_up_overflow, 2);
+    test_align_up_overflow_impl!(u16, test_u16_align_up_overflow, 2);
+    test_align_up_overflow_impl!(u32, test_u32_align_up_overflow, 2);
+    test_align_up_overflow_impl!(u64, test_u64_align_up_overflow, 2);
+    test_align_up_overflow_impl!(u128, test_u128_align_up_overflow, 2);
+    test_align_up_overflow_impl!(usize, test_usize_align_up_overflow, 2);
 }
