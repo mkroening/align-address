@@ -33,6 +33,8 @@ pub trait Align<A = Self>: Copy + PartialEq {
     /// Returns the greatest `x` with alignment `align` so that `x <= addr`.
     ///
     /// Panics if the alignment is not a power of two.
+    #[must_use = "this returns the result of the operation, \
+                  without modifying the original"]
     fn align_down(self, align: A) -> Self;
 
     /// Checked align address upwards.
@@ -42,6 +44,8 @@ pub trait Align<A = Self>: Copy + PartialEq {
     /// Returns `None` if an overflow occurs.
     ///
     /// Panics if the alignment is not a power of two.
+    #[must_use = "this returns the result of the operation, \
+                  without modifying the original"]
     fn checked_align_up(self, align: A) -> Option<Self>;
 
     /// Align address upwards.
@@ -49,6 +53,8 @@ pub trait Align<A = Self>: Copy + PartialEq {
     /// Returns the smallest `x` with alignment `align` so that `x >= addr`.
     ///
     /// Panics if the alignment is not a power of two or if an overflow occurs.
+    #[must_use = "this returns the result of the operation, \
+                  without modifying the original"]
     #[inline]
     fn align_up(self, align: A) -> Self {
         self.checked_align_up(align)
@@ -57,6 +63,7 @@ pub trait Align<A = Self>: Copy + PartialEq {
 
     /// Checks whether the address has the demanded alignment.
     #[allow(clippy::wrong_self_convention)]
+    #[must_use]
     #[inline]
     fn is_aligned_to(self, align: A) -> bool {
         self.align_down(align) == self
@@ -73,6 +80,8 @@ macro_rules! align_impl {
         ///
         /// This is a `const` version of [`Align::align_down`].
         // Adapted from `x86_64`
+        #[must_use = "this returns the result of the operation, \
+                      without modifying the original"]
         #[inline]
         pub const fn $align_down(addr: $u, align: $u) -> $u {
             assert!(align.is_power_of_two(), "`align` must be a power of two");
@@ -89,6 +98,8 @@ macro_rules! align_impl {
         ///
         /// This is a `const` version of [`Align::checked_align_up`].
         // Adapted from `x86_64`
+        #[must_use = "this returns the result of the operation, \
+                      without modifying the original"]
         #[inline]
         pub const fn $checked_align_up(addr: $u, align: $u) -> Option<$u> {
             assert!(align.is_power_of_two(), "`align` must be a power of two");
@@ -109,6 +120,8 @@ macro_rules! align_impl {
         ///
         /// This is a `const` version of [`Align::align_up`].
         // Adapted from `x86_64`
+        #[must_use = "this returns the result of the operation, \
+                      without modifying the original"]
         #[inline]
         pub const fn $align_up(addr: $u, align: $u) -> $u {
             // FIXME: Replace with .expect, once `Option::expect` is const.
@@ -122,6 +135,7 @@ macro_rules! align_impl {
         /// Checks whether the address has the demanded alignment.
         ///
         /// This is a `const` version of [`Align::is_aligned_to`].
+        #[must_use]
         #[inline]
         pub const fn $is_aligned_to(addr: $u, align: $u) -> bool {
             $align_down(addr, align) == addr
