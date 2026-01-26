@@ -35,6 +35,7 @@ pub trait Align<A = Self>: Copy + PartialEq {
     /// Panics if the alignment is not a power of two.
     #[must_use = "this returns the result of the operation, \
                   without modifying the original"]
+    #[track_caller]
     fn align_down(self, align: A) -> Self;
 
     /// Checked align address upwards.
@@ -46,6 +47,7 @@ pub trait Align<A = Self>: Copy + PartialEq {
     /// Panics if the alignment is not a power of two.
     #[must_use = "this returns the result of the operation, \
                   without modifying the original"]
+    #[track_caller]
     fn checked_align_up(self, align: A) -> Option<Self>;
 
     /// Align address upwards.
@@ -56,6 +58,7 @@ pub trait Align<A = Self>: Copy + PartialEq {
     #[must_use = "this returns the result of the operation, \
                   without modifying the original"]
     #[inline]
+    #[track_caller]
     fn align_up(self, align: A) -> Self {
         self.checked_align_up(align)
             .expect("attempt to add with overflow")
@@ -65,6 +68,7 @@ pub trait Align<A = Self>: Copy + PartialEq {
     #[allow(clippy::wrong_self_convention)]
     #[must_use]
     #[inline]
+    #[track_caller]
     fn is_aligned_to(self, align: A) -> bool {
         self.align_down(align) == self
     }
@@ -83,6 +87,7 @@ macro_rules! align_impl {
         #[must_use = "this returns the result of the operation, \
                       without modifying the original"]
         #[inline]
+        #[track_caller]
         pub const fn $align_down(addr: $u, align: $u) -> $u {
             assert!(align.is_power_of_two(), "`align` must be a power of two");
             addr & !(align - 1)
@@ -101,6 +106,7 @@ macro_rules! align_impl {
         #[must_use = "this returns the result of the operation, \
                       without modifying the original"]
         #[inline]
+        #[track_caller]
         pub const fn $checked_align_up(addr: $u, align: $u) -> Option<$u> {
             assert!(align.is_power_of_two(), "`align` must be a power of two");
             let align_mask = align - 1;
@@ -123,6 +129,7 @@ macro_rules! align_impl {
         #[must_use = "this returns the result of the operation, \
                       without modifying the original"]
         #[inline]
+        #[track_caller]
         pub const fn $align_up(addr: $u, align: $u) -> $u {
             // FIXME: Replace with .expect, once `Option::expect` is const.
             if let Some(aligned) = $checked_align_up(addr, align) {
@@ -137,6 +144,7 @@ macro_rules! align_impl {
         /// This is a `const` version of [`Align::is_aligned_to`].
         #[must_use]
         #[inline]
+        #[track_caller]
         pub const fn $is_aligned_to(addr: $u, align: $u) -> bool {
             $align_down(addr, align) == addr
         }
